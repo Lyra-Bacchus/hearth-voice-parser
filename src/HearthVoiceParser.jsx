@@ -829,6 +829,128 @@ function ResultsView({ results, speakers, onReset, onEditSpeaker }) {
           ↓ Hearth Seed
         </button>
       </div>
+
+      {/* Per-speaker split downloads */}
+      <div
+        style={{
+          background: "rgba(0,0,0,0.2)",
+          border: "1px solid rgba(196, 148, 74, 0.1)",
+          borderRadius: "12px",
+          padding: "16px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "12px",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <h3
+            style={{
+              fontFamily: "'Cormorant Garamond', serif",
+              fontSize: "17px",
+              fontWeight: 600,
+              color: "#E8D4C0",
+              margin: 0,
+            }}
+          >
+            Split by speaker
+          </h3>
+          <button
+            onClick={() => {
+              const speakerNames = Object.keys(stats);
+              speakerNames.forEach((name) => {
+                const msgs = results
+                  .filter((r) => r.speaker === name)
+                  .map((r) => r.message)
+                  .join("\n");
+                downloadFile(
+                  msgs,
+                  `${name.toLowerCase().replace(/\s+/g, "-")}-messages.txt`,
+                  "text/plain"
+                );
+              });
+            }}
+            style={{
+              background: "rgba(196, 148, 74, 0.15)",
+              border: "1px solid rgba(196, 148, 74, 0.25)",
+              borderRadius: "8px",
+              color: "#C4944A",
+              padding: "6px 14px",
+              cursor: "pointer",
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: "12px",
+              fontWeight: 600,
+            }}
+          >
+            ↓ Download all separately
+          </button>
+        </div>
+
+        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+          {Object.entries(stats).map(([name, s]) => {
+            const color = getColor(name);
+            return (
+              <button
+                key={name}
+                onClick={() => {
+                  const msgs = results
+                    .filter((r) => r.speaker === name)
+                    .map((r) => r.message)
+                    .join("\n");
+                  downloadFile(
+                    msgs,
+                    `${name.toLowerCase().replace(/\s+/g, "-")}-messages.txt`,
+                    "text/plain"
+                  );
+                }}
+                style={{
+                  flex: "1 1 140px",
+                  background: `${color.bg}cc`,
+                  border: `1px solid ${color.accent}44`,
+                  borderRadius: "10px",
+                  color: color.text,
+                  padding: "12px 16px",
+                  cursor: "pointer",
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: "13px",
+                  fontWeight: 600,
+                  textAlign: "left",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  transition: "all 0.2s",
+                }}
+                onMouseEnter={(e) =>
+                  (e.target.style.borderColor = `${color.accent}88`)
+                }
+                onMouseLeave={(e) =>
+                  (e.target.style.borderColor = `${color.accent}44`)
+                }
+              >
+                <span>
+                  ↓ {name}
+                  <span
+                    style={{
+                      display: "block",
+                      fontSize: "11px",
+                      fontWeight: 400,
+                      color: color.accent,
+                      marginTop: "2px",
+                    }}
+                  >
+                    {s.count} messages
+                  </span>
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 }
