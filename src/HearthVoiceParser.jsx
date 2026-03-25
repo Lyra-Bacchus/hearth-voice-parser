@@ -434,6 +434,7 @@ function ProgressBar({ current, total, status }) {
 function ResultsView({ results, speakers, onReset, onEditSpeaker }) {
   const [view, setView] = useState("transcript");
   const [editIdx, setEditIdx] = useState(null);
+  const [hasDownloaded, setHasDownloaded] = useState(false);
 
   const speakerMap = {};
   speakers.forEach((s, i) => {
@@ -486,6 +487,7 @@ function ResultsView({ results, speakers, onReset, onEditSpeaker }) {
     a.download = filename;
     a.click();
     URL.revokeObjectURL(url);
+    setHasDownloaded(true);
   };
 
   return (
@@ -951,6 +953,54 @@ function ResultsView({ results, speakers, onReset, onEditSpeaker }) {
           })}
         </div>
       </div>
+
+      {/* Post-download: reassurance + delete */}
+      {hasDownloaded && (
+        <div
+          style={{
+            background: "rgba(0,0,0,0.35)",
+            border: "1px solid rgba(196, 148, 74, 0.2)",
+            borderRadius: "12px",
+            padding: "20px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "14px",
+            alignItems: "center",
+            textAlign: "center",
+          }}
+        >
+          <p
+            style={{
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: "13px",
+              color: "#998877",
+              lineHeight: 1.5,
+              margin: 0,
+            }}
+          >
+            No data is stored on our servers. Your conversation was processed
+            in-memory and never saved.
+          </p>
+          <button
+            onClick={onReset}
+            style={{
+              background: "linear-gradient(135deg, #C4944A, #8B6914)",
+              border: "none",
+              borderRadius: "10px",
+              color: "#1A1614",
+              padding: "12px 28px",
+              fontFamily: "'Cormorant Garamond', serif",
+              fontSize: "16px",
+              fontWeight: 700,
+              cursor: "pointer",
+              letterSpacing: "0.5px",
+              transition: "all 0.3s",
+            }}
+          >
+            Now delete this data from the app
+          </button>
+        </div>
+      )}
     </div>
   );
 }
